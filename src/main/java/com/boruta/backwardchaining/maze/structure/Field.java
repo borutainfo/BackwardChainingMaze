@@ -6,10 +6,10 @@ package com.boruta.backwardchaining.maze.structure;
  * @author Sebastian Boruta <sebastian@boruta.info>
  */
 public class Field {
-    private boolean northWall = false;
-    private boolean southWall = false;
-    private boolean eastWall = false;
-    private boolean westWall = false;
+    private boolean northWall = true;
+    private boolean southWall = true;
+    private boolean eastWall = true;
+    private boolean westWall = true;
     private boolean enemy = false;
 
     /**

@@ -1,6 +1,7 @@
 package com.boruta.backwardchaining.maze.structure;
 
 import com.boruta.backwardchaining.maze.exception.InvalidCoordinatesException;
+import com.boruta.backwardchaining.navigation.structure.Position;
 
 /**
  * Class representing a entire maze consisting of multiple fields.
@@ -12,13 +13,13 @@ public class Maze {
     private Field[][] fields;
 
     /**
-     * Instantiates a new Maze.
+     * Instantiates a new maze.
      *
-     * @param size the size
+     * @param size size of maze
      */
     public Maze(int size) {
         this.size = size;
-        this.fields = new Field[size][size]; // creates array of Cells
+        this.fields = new Field[size][size];
 
         for (int x = 0; x < size; x++) {
             for (int y = 0; y < size; y++) {
@@ -28,55 +29,43 @@ public class Maze {
     }
 
     /**
-     * Gets field.
+     * Get field from given position.
      *
-     * @param x the x
-     * @param y the y
-     * @return the field
+     * @param position position
+     * @return field
      */
-    public Field getField(int x, int y) {
-        this.validateCoordinates(x, y);
-        return this.fields[x][y];
+    public Field getField(Position position) {
+        if (this.isPositionInvalid(position)) {
+            throw new InvalidCoordinatesException();
+        }
+
+        return this.fields[position.getX()][position.getY()];
     }
 
     /**
-     * Sets field.
+     * Set field at given position.
      *
-     * @param field the field
-     * @param x     the x
-     * @param y     the y
-     * @return the field
+     * @param field    field
+     * @param position position
+     * @return field
      */
-    public Field setField(Field field, int x, int y) {
-        this.validateCoordinates(x, y);
-        this.propagateWalls(field, x, y);
-        return this.fields[x][y] = field;
-    }
-
-    private void validateCoordinates(int x, int y) {
-        if (x < 0 || y < 0 || x >= size || y >= size) {
+    public Field setField(Field field, Position position) {
+        if (this.isPositionInvalid(position)) {
             throw new InvalidCoordinatesException();
         }
+
+        return this.fields[position.getX()][position.getY()] = field;
     }
 
-    private void propagateWalls(Field field, int x, int y) {
-        if (x > 0) {
-            this.fields[x - 1][y] = this.getField(x - 1, y).setEastWall(field.isWestWall());
-        }
-
-        if (x < (size - 1)) {
-            this.fields[x + 1][y] = this.getField(x + 1, y).setWestWall(field.isEastWall());
-        }
-
-        if (y > 0) {
-            this.fields[x][y - 1] = this.getField(x, y - 1).setNorthWall(field.isSouthWall());
-        }
-
-        if (y < (size - 1)) {
-            this.fields[x][y + 1] = this.getField(x, y + 1).setSouthWall(field.isNorthWall());
-        }
+    private boolean isPositionInvalid(Position position) {
+        return position.getX() < 0 || position.getY() < 0 || position.getX() >= this.size || position.getY() >= this.size;
     }
 
+    /**
+     * Gets maze size.
+     *
+     * @return size
+     */
     public int getSize() {
         return size;
     }

@@ -22,6 +22,12 @@ public class MazePanel extends JPanel {
      */
     public MazePanel(Maze theMaze) {
         maze = theMaze;
+
+//        Timer timer = new Timer(1000, e -> {
+//            maze.setField(maze.getField(10, 10).setEnemy(true), 10, 10);
+//            repaint();
+//        });
+//        timer.start();
     }
 
     public void paintComponent(Graphics page) {
