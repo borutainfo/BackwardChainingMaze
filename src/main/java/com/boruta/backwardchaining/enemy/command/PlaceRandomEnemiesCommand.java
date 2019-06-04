@@ -27,13 +27,6 @@ public class PlaceRandomEnemiesCommand {
     }
 
     /**
-     * Place enemies in maze (default number of enemies).
-     */
-    public void execute() {
-        this.execute(EnemyConstant.DEFAULT_NUMBER_OF_ENEMIES);
-    }
-
-    /**
      * Place enemies in maze (given number of enemies).
      *
      * @param numberOfEnemies number of enemies
@@ -46,7 +39,7 @@ public class PlaceRandomEnemiesCommand {
             throw new InvalidNumberOfEnemies();
         }
 
-        enemiesPositions.add((new Position(EnemyConstant.FORBIDDEN_ENEMY_POSITION)).toString());
+        enemiesPositions.add(EnemyConstant.FORBIDDEN_ENEMY_POSITION.toString());
 
         while (enemiesPositions.size() <= numberOfEnemies) {
             Position randomPosition = RandomPositionHelper.getRandomMazePosition(size);

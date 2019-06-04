@@ -29,6 +29,16 @@ public class Position implements Cloneable {
     }
 
     /**
+     * Create new position located at given start position.
+     *
+     * @param x position x
+     * @param y position y
+     */
+    public Position(int x, int y) {
+        this.currentPosition = new Point(x, y);
+    }
+
+    /**
      * Get X position.
      *
      * @return current position X (as int)
@@ -110,7 +120,7 @@ public class Position implements Cloneable {
     @SuppressWarnings("MethodDoesntCallSuperMethod")
     @Override
     public Position clone() {
-        return new Position(new Point(this.currentPosition.x, this.currentPosition.y));
+        return new Position(this.currentPosition.x, this.currentPosition.y);
     }
 
     @Override

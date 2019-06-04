@@ -74,8 +74,8 @@ public class GetAvailableDirectionsQuery {
         if (!currentField.isWestWall()) {
             availableDirections.add(NavigationConstant.DIRECTION_WEST);
         }
-        if (!currentField.isWestWall()) {
-            availableDirections.add(NavigationConstant.DIRECTION_WEST);
+        if (!currentField.isEastWall()) {
+            availableDirections.add(NavigationConstant.DIRECTION_EAST);
         }
 
         return availableDirections;

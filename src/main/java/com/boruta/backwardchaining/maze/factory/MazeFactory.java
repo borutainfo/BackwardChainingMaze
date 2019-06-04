@@ -18,12 +18,12 @@ import java.util.Random;
  */
 public final class MazeFactory {
     /**
-     * Create random maze.
+     * Create random maze using Aldous-Broder algorithm.
      *
      * @param size size of maze
      * @return generated maze
      */
-    public static Maze createMaze(int size) {
+    public static Maze createMaze(int size, int numberOfEnemies) {
         Maze maze = new Maze(size);
         Position currentPosition = new Position(), movedPosition;
 
@@ -52,7 +52,7 @@ public final class MazeFactory {
         }
 
         PlaceRandomEnemiesCommand placeRandomEnemiesCommand = new PlaceRandomEnemiesCommand(maze);
-        placeRandomEnemiesCommand.execute();
+        placeRandomEnemiesCommand.execute(numberOfEnemies);
 
         return maze;
     }
