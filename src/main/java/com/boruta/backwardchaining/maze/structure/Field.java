@@ -1,5 +1,7 @@
 package com.boruta.backwardchaining.maze.structure;
 
+import com.boruta.backwardchaining.enemy.constant.EnemyConstant;
+
 /**
  * Class representing a single maze field.
  *
@@ -10,7 +12,7 @@ public class Field {
     private boolean southWall = true;
     private boolean eastWall = true;
     private boolean westWall = true;
-    private boolean enemy = false;
+    private int enemy = EnemyConstant.STATUS_NOT_ENEMY;
 
     /**
      * Is there a wall on the north side?
@@ -93,12 +95,21 @@ public class Field {
     }
 
     /**
-     * Is there an enemy in the cell?
+     * Is there an active enemy in the cell?
      *
-     * @return the boolean
+     * @return boolean
      */
-    public boolean isEnemy() {
-        return enemy;
+    public boolean isEnemyActive() {
+        return enemy == EnemyConstant.STATUS_ACTIVE_ENEMY;
+    }
+
+    /**
+     * Is there an defeated enemy corpse in the cell?
+     *
+     * @return boolean
+     */
+    public boolean isEnemyDefeated() {
+        return enemy == EnemyConstant.STATUS_DEFEATED_ENEMY;
     }
 
     /**
@@ -107,7 +118,7 @@ public class Field {
      * @param enemy the enemy
      * @return Field
      */
-    public Field setEnemy(boolean enemy) {
+    public Field setEnemy(int enemy) {
         this.enemy = enemy;
         return this;
     }

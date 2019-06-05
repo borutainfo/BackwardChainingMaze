@@ -1,10 +1,12 @@
 package com.boruta.backwardchaining.engine.panel;
 
+import com.boruta.backwardchaining.agent.structure.Agent;
+import com.boruta.backwardchaining.enemy.command.KillEnemyCommand;
 import com.boruta.backwardchaining.maze.constant.MazeDrawConstant;
 import com.boruta.backwardchaining.engine.draw.MazeDraw;
 import com.boruta.backwardchaining.maze.structure.Maze;
+import com.boruta.backwardchaining.navigation.helper.OppositeDirectionHelper;
 import com.boruta.backwardchaining.navigation.query.GetAvailableDirectionsQuery;
-import com.boruta.backwardchaining.navigation.structure.Position;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,24 +20,30 @@ import java.util.Random;
  */
 public class MazePanel extends JPanel {
     private Maze maze;
-    private Position position;
+    private Agent agent;
 
     /**
      * Instantiates a new maze panel.
      *
      * @param maze the the maze
      */
-    public MazePanel(Maze maze) {
+    public MazePanel(Maze maze, Agent agent) {
         this.maze = maze;
-        position = new Position();
+        this.agent = agent;
 
         GetAvailableDirectionsQuery getAvailableDirectionsQuery = new GetAvailableDirectionsQuery(maze);
+        KillEnemyCommand killEnemyCommand = new KillEnemyCommand(maze);
         Random rand = new Random();
+        final int[] direction = {-1};
 
         Timer timer = new Timer(200, e -> {
-            List<Integer> availableDirections = getAvailableDirectionsQuery.execute(position);
-            int direction = availableDirections.get(rand.nextInt(availableDirections.size()));
-            position.go(direction);
+            List<Integer> availableDirections = getAvailableDirectionsQuery.execute(agent.getCurrentPosition());
+            if (availableDirections.size() > 1) {
+                availableDirections.remove(Integer.valueOf(OppositeDirectionHelper.getOppositeDirection(direction[0])));
+            }
+            direction[0] = availableDirections.get(rand.nextInt(availableDirections.size()));
+            agent.go(direction[0]);
+            killEnemyCommand.execute(agent.getCurrentPosition());
             repaint();
         });
         timer.start();
@@ -50,6 +58,6 @@ public class MazePanel extends JPanel {
 
         this.setPreferredSize(windowSize);
 
-        MazeDraw.draw(page, maze, position);
+        MazeDraw.draw(page, maze, agent);
     }
 }

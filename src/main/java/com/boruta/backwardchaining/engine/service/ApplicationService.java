@@ -1,5 +1,6 @@
 package com.boruta.backwardchaining.engine.service;
 
+import com.boruta.backwardchaining.agent.structure.Agent;
 import com.boruta.backwardchaining.enemy.constant.EnemyConstant;
 import com.boruta.backwardchaining.engine.constant.EngineConstant;
 import com.boruta.backwardchaining.maze.constant.MazeBuildConstant;
@@ -43,9 +44,10 @@ public class ApplicationService {
         }
 
         Maze maze = MazeFactory.createMaze(mazeSize, numberOfEnemies);
+        Agent agent = new Agent();
 
         JFrame frame = new JFrame(EngineConstant.APPLICATION_TITLE);
-        MazePanel panel = new MazePanel(maze);
+        MazePanel panel = new MazePanel(maze, agent);
         JScrollPane scrollPane = new JScrollPane(panel);
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

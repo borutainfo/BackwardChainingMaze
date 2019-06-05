@@ -1,5 +1,6 @@
 package com.boruta.backwardchaining.engine.draw;
 
+import com.boruta.backwardchaining.agent.structure.Agent;
 import com.boruta.backwardchaining.maze.constant.MazeDrawConstant;
 import com.boruta.backwardchaining.maze.structure.Maze;
 import com.boruta.backwardchaining.navigation.structure.Position;
@@ -19,8 +20,17 @@ public final class MazeDraw {
      * @param maze            maze
      * @param currentPosition current position
      */
-    public static void draw(Graphics graphics, Maze maze, Position currentPosition) {
+    public static void draw(Graphics graphics, Maze maze, Agent currentPosition) {
         int size = maze.getSize();
+
+        // draw visited positions
+        graphics.setColor(new Color(224, 224, 224));
+        for (Position position : currentPosition.getVisitedPositions()) {
+            graphics.fillRect(position.getX() * MazeDrawConstant.FIELD_SIZE + MazeDrawConstant.MARGIN,
+                    (size - position.getY() - 1) * MazeDrawConstant.FIELD_SIZE + MazeDrawConstant.MARGIN,
+                    MazeDrawConstant.FIELD_SIZE,
+                    MazeDrawConstant.FIELD_SIZE);
+        }
 
         // draw base
         graphics.setColor(Color.yellow);
@@ -63,11 +73,11 @@ public final class MazeDraw {
             }
         }
 
-        // draw enemies
+        // draw active enemies
         graphics.setColor(Color.RED);
         for (int x = 0; x < size; x++) {
             for (int y = 0; y < size; y++) {
-                if (maze.getField(new Position(x, (size - y - 1))).isEnemy()) {
+                if (maze.getField(new Position(x, (size - y - 1))).isEnemyActive()) {
                     graphics.fillOval(x * MazeDrawConstant.FIELD_SIZE + MazeDrawConstant.MARGIN + MazeDrawConstant.SOLDIER_SIZE / 2,
                             y * MazeDrawConstant.FIELD_SIZE + MazeDrawConstant.MARGIN + MazeDrawConstant.SOLDIER_SIZE / 2,
                             MazeDrawConstant.SOLDIER_SIZE, MazeDrawConstant.SOLDIER_SIZE);
@@ -75,10 +85,28 @@ public final class MazeDraw {
             }
         }
 
+        // draw defeated enemies
+        graphics.setColor(Color.RED);
+        for (int x = 0; x < size; x++) {
+            for (int y = 0; y < size; y++) {
+                if (maze.getField(new Position(x, (size - y - 1))).isEnemyDefeated()) {
+                    graphics.drawLine(x * MazeDrawConstant.FIELD_SIZE + MazeDrawConstant.MARGIN + 5,
+                            y * MazeDrawConstant.FIELD_SIZE + MazeDrawConstant.MARGIN + 5,
+                            (x + 1) * MazeDrawConstant.FIELD_SIZE + MazeDrawConstant.MARGIN - 5,
+                            (y + 1) * MazeDrawConstant.FIELD_SIZE + MazeDrawConstant.MARGIN - 5);
+
+                    graphics.drawLine(x * MazeDrawConstant.FIELD_SIZE + MazeDrawConstant.MARGIN + 5,
+                            (y + 1) * MazeDrawConstant.FIELD_SIZE + MazeDrawConstant.MARGIN - 5,
+                            (x + 1) * MazeDrawConstant.FIELD_SIZE + MazeDrawConstant.MARGIN - 5,
+                            y * MazeDrawConstant.FIELD_SIZE + MazeDrawConstant.MARGIN + 5);
+                }
+            }
+        }
+
         // draw agent
         graphics.setColor(Color.GREEN);
-        graphics.fillOval(currentPosition.getX() * MazeDrawConstant.FIELD_SIZE + MazeDrawConstant.MARGIN + MazeDrawConstant.SOLDIER_SIZE / 2,
-                (size - currentPosition.getY() - 1) * MazeDrawConstant.FIELD_SIZE + MazeDrawConstant.MARGIN + MazeDrawConstant.SOLDIER_SIZE / 2,
+        graphics.fillOval(currentPosition.getCurrentPosition().getX() * MazeDrawConstant.FIELD_SIZE + MazeDrawConstant.MARGIN + MazeDrawConstant.SOLDIER_SIZE / 2,
+                (size - currentPosition.getCurrentPosition().getY() - 1) * MazeDrawConstant.FIELD_SIZE + MazeDrawConstant.MARGIN + MazeDrawConstant.SOLDIER_SIZE / 2,
                 MazeDrawConstant.SOLDIER_SIZE, MazeDrawConstant.SOLDIER_SIZE);
     }
 }

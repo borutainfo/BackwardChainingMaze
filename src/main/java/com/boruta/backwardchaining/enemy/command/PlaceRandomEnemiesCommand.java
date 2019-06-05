@@ -45,7 +45,7 @@ public class PlaceRandomEnemiesCommand {
             Position randomPosition = RandomPositionHelper.getRandomMazePosition(size);
 
             if (!enemiesPositions.contains(randomPosition.toString())) {
-                maze.setField(maze.getField(randomPosition).setEnemy(true), randomPosition);
+                maze.setField(maze.getField(randomPosition).setEnemy(EnemyConstant.STATUS_ACTIVE_ENEMY), randomPosition);
                 enemiesPositions.add(randomPosition.toString());
             }
         }
