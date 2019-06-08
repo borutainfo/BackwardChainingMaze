@@ -18,14 +18,14 @@ public final class MazeDraw {
      *
      * @param graphics        graphics
      * @param maze            maze
-     * @param currentPosition current position
+     * @param agent current position
      */
-    public static void draw(Graphics graphics, Maze maze, Agent currentPosition) {
+    public static void draw(Graphics graphics, Maze maze, Agent agent) {
         int size = maze.getSize();
 
         // draw visited positions
         graphics.setColor(new Color(224, 224, 224));
-        for (Position position : currentPosition.getVisitedPositions()) {
+        for (Position position : agent.getVisitedPositions()) {
             graphics.fillRect(position.getX() * MazeDrawConstant.FIELD_SIZE + MazeDrawConstant.MARGIN,
                     (size - position.getY() - 1) * MazeDrawConstant.FIELD_SIZE + MazeDrawConstant.MARGIN,
                     MazeDrawConstant.FIELD_SIZE,
@@ -105,8 +105,8 @@ public final class MazeDraw {
 
         // draw agent
         graphics.setColor(Color.GREEN);
-        graphics.fillOval(currentPosition.getCurrentPosition().getX() * MazeDrawConstant.FIELD_SIZE + MazeDrawConstant.MARGIN + MazeDrawConstant.SOLDIER_SIZE / 2,
-                (size - currentPosition.getCurrentPosition().getY() - 1) * MazeDrawConstant.FIELD_SIZE + MazeDrawConstant.MARGIN + MazeDrawConstant.SOLDIER_SIZE / 2,
+        graphics.fillOval(agent.getCurrentPosition().getX() * MazeDrawConstant.FIELD_SIZE + MazeDrawConstant.MARGIN + MazeDrawConstant.SOLDIER_SIZE / 2,
+                (size - agent.getCurrentPosition().getY() - 1) * MazeDrawConstant.FIELD_SIZE + MazeDrawConstant.MARGIN + MazeDrawConstant.SOLDIER_SIZE / 2,
                 MazeDrawConstant.SOLDIER_SIZE, MazeDrawConstant.SOLDIER_SIZE);
     }
 }

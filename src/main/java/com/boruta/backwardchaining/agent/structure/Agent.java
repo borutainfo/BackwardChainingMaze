@@ -11,16 +11,22 @@ import java.util.List;
  * @author Sebastian Boruta <sebastian@boruta.info>
  */
 public class Agent {
+    private Energy energy;
     private Position currentPosition;
     private List<Position> visitedPositions;
+    private int lastMove;
 
     /**
-     * Instantiates a new agent.
+     * Instantiates a new agent using given energy level.
+     *
+     * @param energy the energy
      */
-    public Agent() {
+    public Agent(Energy energy) {
+        this.energy = energy;
         this.currentPosition = new Position();
         this.visitedPositions = new ArrayList<>();
         this.addVisitedPosition(this.currentPosition);
+        this.lastMove = 0;
     }
 
     /**
@@ -29,6 +35,8 @@ public class Agent {
      * @param direction direction
      */
     public void go(int direction) {
+        this.getEnergy().move();
+        this.lastMove = direction;
         this.currentPosition.go(direction);
         this.addVisitedPosition(currentPosition);
     }
@@ -64,5 +72,23 @@ public class Agent {
      */
     public List<Position> getVisitedPositions() {
         return visitedPositions;
+    }
+
+    /**
+     * Get energy.
+     *
+     * @return the energy
+     */
+    public Energy getEnergy() {
+        return energy;
+    }
+
+    /**
+     * Get last move direction.
+     *
+     * @return last move direction
+     */
+    public int getLastMove() {
+        return this.lastMove;
     }
 }

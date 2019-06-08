@@ -13,7 +13,7 @@ public final class EngineConstant {
     /**
      * Window size - width.
      */
-    public static final int WINDOW_SIZE_WIDTH = 700;
+    public static final int WINDOW_SIZE_WIDTH = 600;
     /**
      * Window size - height.
      */
@@ -26,4 +26,8 @@ public final class EngineConstant {
      * Input argument id for number of enemies.
      */
     public static final int ARGUMENT_NUMBER_OF_ENEMIES = 1;
+    /**
+     * Input argument id for energy level.
+     */
+    public static final int ARGUMENT_ENERGY_LEVEL = 2;
 }
