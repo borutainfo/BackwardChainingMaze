@@ -25,7 +25,7 @@ public final class MazeDraw {
 
         // draw visited positions
         graphics.setColor(new Color(224, 224, 224));
-        for (Position position : agent.getVisitedPositions()) {
+        for (Position position : agent.getKnownPositions()) {
             graphics.fillRect(position.getX() * MazeDrawConstant.FIELD_SIZE + MazeDrawConstant.MARGIN,
                     (size - position.getY() - 1) * MazeDrawConstant.FIELD_SIZE + MazeDrawConstant.MARGIN,
                     MazeDrawConstant.FIELD_SIZE,
@@ -108,5 +108,20 @@ public final class MazeDraw {
         graphics.fillOval(agent.getCurrentPosition().getX() * MazeDrawConstant.FIELD_SIZE + MazeDrawConstant.MARGIN + MazeDrawConstant.SOLDIER_SIZE / 2,
                 (size - agent.getCurrentPosition().getY() - 1) * MazeDrawConstant.FIELD_SIZE + MazeDrawConstant.MARGIN + MazeDrawConstant.SOLDIER_SIZE / 2,
                 MazeDrawConstant.SOLDIER_SIZE, MazeDrawConstant.SOLDIER_SIZE);
+
+
+        // optional: agent view
+        graphics.setColor(Color.ORANGE);
+        for (int x = 0; x < size; x++) {
+            for (int y = 0; y < size; y++) {
+                Position position = new Position(x, y);
+                if (!agent.getKnownPositions().contains(position)) {
+                    graphics.fillRect(position.getX() * MazeDrawConstant.FIELD_SIZE + MazeDrawConstant.MARGIN,
+                            (size - position.getY() - 1) * MazeDrawConstant.FIELD_SIZE + MazeDrawConstant.MARGIN,
+                            MazeDrawConstant.FIELD_SIZE,
+                            MazeDrawConstant.FIELD_SIZE);
+                }
+            }
+        }
     }
 }

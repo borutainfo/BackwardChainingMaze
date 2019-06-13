@@ -9,7 +9,7 @@ public final class AgentConstant {
     /**
      * Default agent energy.
      */
-    public static final int DEFAULT_ENERGY = 100;
+    public static final int DEFAULT_ENERGY = 1000;
     /**
      * Energy consumed for move.
      */

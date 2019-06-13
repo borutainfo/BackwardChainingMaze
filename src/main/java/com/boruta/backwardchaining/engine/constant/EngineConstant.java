@@ -11,13 +11,17 @@ public final class EngineConstant {
      */
     public static final String APPLICATION_TITLE = "Maze by Sebastian Boruta";
     /**
+     * Drools session name.
+     */
+    public static final String SESSION_NAME = "maze-rules";
+    /**
      * Window size - width.
      */
     public static final int WINDOW_SIZE_WIDTH = 600;
     /**
      * Window size - height.
      */
-    public static final int WINDOW_SIZE_HEIGHT = 700;
+    public static final int WINDOW_SIZE_HEIGHT = 650;
     /**
      * Input argument id for maze size.
      */

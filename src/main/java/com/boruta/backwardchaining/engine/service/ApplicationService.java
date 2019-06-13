@@ -1,24 +1,26 @@
 package com.boruta.backwardchaining.engine.service;
 
 import com.boruta.backwardchaining.agent.constant.AgentConstant;
-import com.boruta.backwardchaining.agent.exception.NotEnoughEnergyException;
 import com.boruta.backwardchaining.agent.structure.Agent;
 import com.boruta.backwardchaining.agent.structure.Energy;
-import com.boruta.backwardchaining.enemy.command.KillEnemyCommand;
 import com.boruta.backwardchaining.enemy.constant.EnemyConstant;
 import com.boruta.backwardchaining.engine.constant.EngineConstant;
+import com.boruta.backwardchaining.engine.panel.MazePanel;
 import com.boruta.backwardchaining.engine.panel.ScorePanel;
 import com.boruta.backwardchaining.maze.constant.MazeBuildConstant;
 import com.boruta.backwardchaining.maze.factory.MazeFactory;
-import com.boruta.backwardchaining.engine.panel.MazePanel;
 import com.boruta.backwardchaining.maze.structure.Maze;
-import com.boruta.backwardchaining.navigation.helper.OppositeDirectionHelper;
-import com.boruta.backwardchaining.navigation.query.GetAvailableDirectionsQuery;
+import com.boruta.backwardchaining.navigation.helper.KnownPositionsHelper;
+import com.boruta.backwardchaining.navigation.structure.Location;
+import com.boruta.backwardchaining.navigation.structure.Position;
+import org.drools.core.event.DefaultAgendaEventListener;
+import org.kie.api.KieServices;
+import org.kie.api.event.rule.AfterMatchFiredEvent;
+import org.kie.api.runtime.KieContainer;
+import org.kie.api.runtime.KieSession;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.List;
-import java.util.Random;
 
 /**
  * Application run service.
@@ -61,6 +63,12 @@ public class ApplicationService {
         Energy energy = new Energy(energyLevel);
         Agent agent = new Agent(energy);
 
+        for (Position position : KnownPositionsHelper.getVisiblePositions(agent.getCurrentPosition(), maze)) {
+            if (!agent.getKnownPositions().contains(position)) {
+                agent.getKnownPositions().add(position);
+            }
+        }
+
         JFrame appFrame = new JFrame(EngineConstant.APPLICATION_TITLE);
         MazePanel mazePanel = new MazePanel(maze, agent);
         ScorePanel scorePanel = new ScorePanel(maze, agent);
@@ -72,28 +80,39 @@ public class ApplicationService {
         appFrame.add(scorePanel, BorderLayout.PAGE_END);
         appFrame.setVisible(true);
 
-        GetAvailableDirectionsQuery getAvailableDirectionsQuery = new GetAvailableDirectionsQuery(maze);
-        KillEnemyCommand killEnemyCommand = new KillEnemyCommand(maze, agent);
-        Random rand = new Random();
+        KieServices ks = KieServices.Factory.get();
+        KieContainer kContainer = ks.getKieClasspathContainer();
+        KieSession kSession = kContainer.newKieSession(EngineConstant.SESSION_NAME);
 
-        Timer timer = new Timer(100, e -> {
-            List<Integer> availableDirections = getAvailableDirectionsQuery.execute(agent.getCurrentPosition());
+        Location location1 = new Location("drukarka", "office");
+        Location location2 = new Location("office", "budynek");
+        Location location3 = new Location("budynek", "wyrzysk");
+        kSession.insert(location1);
+        kSession.insert(location2);
+        kSession.insert(location3);
+        kSession.insert(maze);
+        kSession.insert(agent);
 
-            if (availableDirections.size() > 1) {
-                availableDirections.remove(Integer.valueOf(OppositeDirectionHelper.getOppositeDirection(agent.getLastMove())));
+//        QueryResults results = kSession.getQueryResults("isContainedIn", new Object[]{"drukarka", "wyrzysk"});
+//        List<List<String>> l = new ArrayList<>();
+//        for (QueryResultsRow r : results) {
+//            System.out.println(r);
+//            l.add(Arrays.asList((String) r.get("x"), (String) r.get("y")));
+//        }
+
+        kSession.addEventListener(new DefaultAgendaEventListener() {
+            public void afterMatchFired(AfterMatchFiredEvent event) {
+                super.afterMatchFired(event);
+
+                try {
+                    appFrame.repaint();
+                    Thread.sleep(10);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
-
-            int direction = availableDirections.get(rand.nextInt(availableDirections.size()));
-
-            try {
-                agent.go(direction);
-                killEnemyCommand.execute(agent.getCurrentPosition());
-            } catch (NotEnoughEnergyException exception) {
-                ((Timer) e.getSource()).stop();
-            }
-
-            appFrame.repaint();
         });
-        timer.start();
+
+        kSession.fireAllRules();
     }
 }

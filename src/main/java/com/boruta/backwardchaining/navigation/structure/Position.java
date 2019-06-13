@@ -127,4 +127,28 @@ public class Position implements Cloneable {
     public String toString() {
         return currentPosition.toString();
     }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object instanceof Position) {
+            return this.toString().equals(object.toString());
+        }
+        return super.equals(object);
+    }
+
+    public int getDirection(Position otherPosition) {
+        if (otherPosition.getX() > this.currentPosition.getX()) {
+            return NavigationConstant.DIRECTION_EAST;
+        }
+        if (otherPosition.getX() < this.currentPosition.getX()) {
+            return NavigationConstant.DIRECTION_WEST;
+        }
+        if (otherPosition.getY() > this.currentPosition.getY()) {
+            return NavigationConstant.DIRECTION_NORTH;
+        }
+        if (otherPosition.getY() < this.currentPosition.getY()) {
+            return NavigationConstant.DIRECTION_SOUTH;
+        }
+        return -1;
+    }
 }

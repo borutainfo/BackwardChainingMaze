@@ -1,5 +1,6 @@
 package com.boruta.backwardchaining.agent.structure;
 
+import com.boruta.backwardchaining.navigation.helper.OppositeDirectionHelper;
 import com.boruta.backwardchaining.navigation.structure.Position;
 
 import java.util.ArrayList;
@@ -13,8 +14,11 @@ import java.util.List;
 public class Agent {
     private Energy energy;
     private Position currentPosition;
-    private List<Position> visitedPositions;
-    private int lastMove;
+    private List<Position> knownPositions;
+    private List<Integer> wayback;
+    private Integer lastMove;
+    private List<Position> targets;
+    private boolean finished = false;
 
     /**
      * Instantiates a new agent using given energy level.
@@ -24,9 +28,11 @@ public class Agent {
     public Agent(Energy energy) {
         this.energy = energy;
         this.currentPosition = new Position();
-        this.visitedPositions = new ArrayList<>();
-        this.addVisitedPosition(this.currentPosition);
+        this.knownPositions = new ArrayList<>();
+        this.wayback = new ArrayList<>();
+        this.addKnownPosition(this.currentPosition);
         this.lastMove = 0;
+        this.targets = new ArrayList<>();
     }
 
     /**
@@ -38,7 +44,13 @@ public class Agent {
         this.getEnergy().move();
         this.lastMove = direction;
         this.currentPosition.go(direction);
-        this.addVisitedPosition(currentPosition);
+        this.addKnownPosition(currentPosition);
+
+        if (this.wayback.size() > 0 && this.wayback.get(this.wayback.size() - 1) == direction) {
+            this.wayback.remove(this.wayback.size() - 1);
+        } else {
+            this.wayback.add(OppositeDirectionHelper.getOppositeDirection(direction));
+        }
     }
 
     /**
@@ -56,22 +68,22 @@ public class Agent {
      * @param position position
      * @return boolean true for new position
      */
-    public boolean addVisitedPosition(Position position) {
-        if (this.visitedPositions.contains(position)) {
+    public boolean addKnownPosition(Position position) {
+        if (this.knownPositions.contains(position)) {
             return false;
         }
 
-        this.visitedPositions.add(position.clone());
+        this.knownPositions.add(position.clone());
         return true;
     }
 
     /**
-     * Get all visited positions.
+     * Get all known positions.
      *
-     * @return the visited positions
+     * @return the known positions
      */
-    public List<Position> getVisitedPositions() {
-        return visitedPositions;
+    public List<Position> getKnownPositions() {
+        return knownPositions;
     }
 
     /**
@@ -84,11 +96,43 @@ public class Agent {
     }
 
     /**
-     * Get last move direction.
+     * Get list of movements to return to base.
      *
-     * @return last move direction
+     * @return way back to base
      */
-    public int getLastMove() {
+    public List<Integer> getWayback() {
+        return this.wayback;
+    }
+
+    public Integer getLastMove() {
         return this.lastMove;
+    }
+
+    public void resetTarget() {
+        this.targets = new ArrayList<>();
+    }
+
+    public boolean isSingleTarget() {
+        return targets.size() == 1;
+    }
+
+    public boolean noTarget() {
+        return this.targets.size() <= 0;
+    }
+
+    public List<Position> getTargets() {
+        return this.targets;
+    }
+
+    public Position getTarget() {
+        return this.targets.get(0);
+    }
+
+    public boolean isFinished() {
+        return finished;
+    }
+
+    public void setFinished(boolean finished) {
+        this.finished = finished;
     }
 }
