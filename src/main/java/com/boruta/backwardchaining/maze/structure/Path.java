@@ -17,15 +17,4 @@ public class Path {
         return position;
     }
 
-    public void setPosition(Position neighbor1) {
-        this.position = neighbor1;
-    }
-
-    public Position getTarget() {
-        return target;
-    }
-
-    public void setTarget(Position target) {
-        this.target = target;
-    }
 }

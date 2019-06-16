@@ -14,69 +14,27 @@ import com.boruta.backwardchaining.maze.helper.NeighborsHelper
 import com.boruta.backwardchaining.maze.structure.Path
 import java.util.ArrayList
 import java.util.Collections
+import com.boruta.backwardchaining.agent.command.ChooseTargetCommand
 
-query getPath(Position x, Position y, Path k)
-    k := Path(x, y;)
-    or
-    (k := Path(z, y;) and isPath(x, z;))
-end
-
-query isPath(Position x, Position y)
-    Path(x, y;)
-    or
-    (Path(z, y;) and isPath(x, z;))
-end
-
-// wybór celu: znieszenie znanych pozycji wrogów
+// choose next agent target
 rule "select enemy target" salience 10
     when
-        $agent : Agent(!isFinished());
         $maze : Maze();
+        $agent : Agent(!isTarget(), !isFinished());
     then
-
-        Collections.reverse($agent.getKnownPositions());
-        if($agent.noTarget()) {
-            for (Position position : $agent.getKnownPositions()) {
-                if($maze.getField(position).isEnemyActive()) {
-                    $agent.getTargets().add(position.clone());
-                    update($agent);
-                    break;
-                }
-            }
-         }
-
-        if($agent.noTarget()) {
-                outerloop:
-                    for (Position position : $agent.getKnownPositions()) {
-                        for (Position neighborPosition : NeighborsHelper.getNeighbors(position, $maze)) {
-                            if(!($agent.getKnownPositions().contains(neighborPosition)) && !($agent.getTargets().contains(position))) {
-                                $agent.getTargets().add(position.clone());
-                                update($agent);
-                                break outerloop;
-                                                         }
-                        }
-                    }
+        ChooseTargetCommand chooseTargetCommand = new ChooseTargetCommand($maze, $agent);
+        if(!chooseTargetCommand.execute()) {
+            $agent.setFinished(true);
         }
-        Collections.reverse($agent.getKnownPositions());
-
-                if($agent.noTarget() && !$agent.getCurrentPosition().equals(new Position(0,0))) {
-                    $agent.getTargets().add(new Position(0,0));
-                    update($agent);
-                }
-
-                if($agent.noTarget()) {
-                    $agent.setFinished(true);
-                    update($agent);
-                }
+        update($agent);
 end
 
 // zbudowanie możliwych ścieżek od aktualnej pozycji do celu
 rule "build pathes" salience 5
     when
-        $agent : Agent(!isFinished());
+        $agent : Agent(isTarget(), !isFinished());
         $maze : Maze();
     then
-
         List<Position> usedPosition = new ArrayList<>();
         List<Position> workingPosition = new ArrayList<>();
         workingPosition.add($agent.getTarget());
@@ -96,7 +54,7 @@ end
 
 rule "all in one" salience 5
     when
-        $agent : Agent(!isFinished(), !noTarget(), $position : getCurrentPosition(), $target : getTarget(), $energy : getEnergy(), $energy.currentLevel() > 0);
+        $agent : Agent(isTarget(), !isFinished(), $position : getCurrentPosition(), $target : getTarget(), $energy : getEnergy(), $energy.currentLevel() > 0)
         $maze : Maze()
         getPath($target, $position, nextMove;)
         $pathes : ArrayList(size > 0) from collect (Path())
@@ -129,10 +87,22 @@ rule "all in one" salience 5
 
 
           if($agent.getCurrentPosition().equals($target)) {
-              $agent.resetTarget();
+              $agent.removeTarget();
               update($agent);
           }
 
                 update($agent);
                 update($maze);
+end
+
+query isPath(Position x, Position y)
+    Path(x, y;)
+    or
+    (Path(z, y;) and isPath(x, z;))
+end
+
+query getPath(Position x, Position y, Path k)
+    k := Path(x, y;)
+    or
+    (k := Path(z, y;) and isPath(x, z;))
 end

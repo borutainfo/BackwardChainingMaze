@@ -14,10 +14,9 @@ import java.util.List;
 public class Agent {
     private Energy energy;
     private Position currentPosition;
+    private Position target;
     private List<Position> knownPositions;
     private List<Integer> wayback;
-    private Integer lastMove;
-    private List<Position> targets;
     private boolean finished = false;
 
     /**
@@ -31,8 +30,6 @@ public class Agent {
         this.knownPositions = new ArrayList<>();
         this.wayback = new ArrayList<>();
         this.addKnownPosition(this.currentPosition);
-        this.lastMove = 0;
-        this.targets = new ArrayList<>();
     }
 
     /**
@@ -41,16 +38,10 @@ public class Agent {
      * @param direction direction
      */
     public void go(int direction) {
-        this.getEnergy().move();
-        this.lastMove = direction;
         this.currentPosition.go(direction);
-        this.addKnownPosition(currentPosition);
-
-        if (this.wayback.size() > 0 && this.wayback.get(this.wayback.size() - 1) == direction) {
-            this.wayback.remove(this.wayback.size() - 1);
-        } else {
-            this.wayback.add(OppositeDirectionHelper.getOppositeDirection(direction));
-        }
+        this.getEnergy().move();
+        this.addKnownPosition(this.currentPosition);
+        this.noteWayback(direction);
     }
 
     /**
@@ -66,15 +57,13 @@ public class Agent {
      * Add position to visited.
      *
      * @param position position
-     * @return boolean true for new position
      */
-    public boolean addKnownPosition(Position position) {
+    private void addKnownPosition(Position position) {
         if (this.knownPositions.contains(position)) {
-            return false;
+            return;
         }
 
         this.knownPositions.add(position.clone());
-        return true;
     }
 
     /**
@@ -104,28 +93,33 @@ public class Agent {
         return this.wayback;
     }
 
-    public Integer getLastMove() {
-        return this.lastMove;
+    /**
+     * Add current move direction to wayback.
+     *
+     * @param direction move direction
+     */
+    private void noteWayback(int direction) {
+        if (this.wayback.size() > 0 && this.wayback.get(this.wayback.size() - 1) == direction) {
+            this.wayback.remove(this.wayback.size() - 1);
+        } else {
+            this.wayback.add(OppositeDirectionHelper.getOppositeDirection(direction));
+        }
     }
 
-    public void resetTarget() {
-        this.targets = new ArrayList<>();
+    public boolean isTarget() {
+        return this.target != null;
     }
 
-    public boolean isSingleTarget() {
-        return targets.size() == 1;
+    public void removeTarget() {
+        this.target = null;
     }
 
-    public boolean noTarget() {
-        return this.targets.size() <= 0;
-    }
-
-    public List<Position> getTargets() {
-        return this.targets;
+    public void setTarget(Position position) {
+        this.target = position;
     }
 
     public Position getTarget() {
-        return this.targets.get(0);
+        return this.target;
     }
 
     public boolean isFinished() {
