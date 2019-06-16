@@ -11,7 +11,6 @@ import com.boruta.backwardchaining.maze.constant.MazeBuildConstant;
 import com.boruta.backwardchaining.maze.factory.MazeFactory;
 import com.boruta.backwardchaining.maze.structure.Maze;
 import com.boruta.backwardchaining.navigation.helper.KnownPositionsHelper;
-import com.boruta.backwardchaining.navigation.structure.Location;
 import com.boruta.backwardchaining.navigation.structure.Position;
 import org.drools.core.event.DefaultAgendaEventListener;
 import org.kie.api.KieServices;
@@ -84,21 +83,8 @@ public class ApplicationService {
         KieContainer kContainer = ks.getKieClasspathContainer();
         KieSession kSession = kContainer.newKieSession(EngineConstant.SESSION_NAME);
 
-        Location location1 = new Location("drukarka", "office");
-        Location location2 = new Location("office", "budynek");
-        Location location3 = new Location("budynek", "wyrzysk");
-        kSession.insert(location1);
-        kSession.insert(location2);
-        kSession.insert(location3);
         kSession.insert(maze);
         kSession.insert(agent);
-
-//        QueryResults results = kSession.getQueryResults("isContainedIn", new Object[]{"drukarka", "wyrzysk"});
-//        List<List<String>> l = new ArrayList<>();
-//        for (QueryResultsRow r : results) {
-//            System.out.println(r);
-//            l.add(Arrays.asList((String) r.get("x"), (String) r.get("y")));
-//        }
 
         kSession.addEventListener(new DefaultAgendaEventListener() {
             public void afterMatchFired(AfterMatchFiredEvent event) {

@@ -8,19 +8,19 @@ import com.boruta.backwardchaining.enemy.command.KillEnemyCommand
 import java.util.Random
 import com.boruta.backwardchaining.navigation.helper.OppositeDirectionHelper
 import com.boruta.backwardchaining.navigation.structure.Position
-import com.boruta.backwardchaining.navigation.structure.Location
 import com.boruta.backwardchaining.navigation.helper.KnownPositionsHelper
 import com.boruta.backwardchaining.maze.helper.NeighborsHelper
 import com.boruta.backwardchaining.maze.structure.Path
 import java.util.ArrayList
 import java.util.Collections
 import com.boruta.backwardchaining.agent.command.ChooseTargetCommand
+import com.boruta.backwardchaining.navigation.helper.PathsFromTargetHelper
 
 // choose next agent target
-rule "select enemy target" salience 10
+rule "select enemy target" salience 4
     when
         $maze : Maze();
-        $agent : Agent(!isTarget(), !isFinished());
+        $agent : Agent(!isFinished(), !isTargetChoosed());
     then
         ChooseTargetCommand chooseTargetCommand = new ChooseTargetCommand($maze, $agent);
         if(!chooseTargetCommand.execute()) {
@@ -29,39 +29,29 @@ rule "select enemy target" salience 10
         update($agent);
 end
 
-// zbudowanie możliwych ścieżek od aktualnej pozycji do celu
-rule "build pathes" salience 5
+// build pathes from target to current position
+rule "build pathes" salience 3
     when
-        $agent : Agent(isTarget(), !isFinished());
         $maze : Maze();
+        $agent : Agent(!isFinished(), isTargetChoosed());
     then
-        List<Position> usedPosition = new ArrayList<>();
-        List<Position> workingPosition = new ArrayList<>();
-        workingPosition.add($agent.getTarget());
-        usedPosition.add($agent.getTarget());
+        List<Path> result = PathsFromTargetHelper.getPaths($maze, $agent);
 
-        while(workingPosition.size() > 0) {
-            for (Position neighborPosition : NeighborsHelper.getNeighbors(workingPosition.get(0), $maze)) {
-                if($agent.getKnownPositions().contains(neighborPosition) && !usedPosition.contains(neighborPosition)) {
-                    usedPosition.add(neighborPosition.clone());
-                    workingPosition.add(neighborPosition.clone());
-                    insert(new Path(workingPosition.get(0), neighborPosition.clone()));
-                }
-            }
-            workingPosition.remove(0);
+        for(Path path : result) {
+            insert(path);
         }
 end
 
-rule "all in one" salience 5
+rule "move" salience 2
     when
-        $agent : Agent(isTarget(), !isFinished(), $position : getCurrentPosition(), $target : getTarget(), $energy : getEnergy(), $energy.currentLevel() > 0)
+        $agent : Agent(!isFinished(), isTargetChoosed(), $target : getTarget(), $position : getCurrentPosition(), $energy : getEnergy(), $energy.currentLevel() > 0)
         $maze : Maze()
         getPath($target, $position, nextMove;)
         $pathes : ArrayList(size > 0) from collect (Path())
     then
         int direction;
 
-        direction = $position.getDirection(nextMove.getPosition());
+        direction = $position.getDirection(nextMove.getPathTo());
 
                     for (int i = 0; i < $pathes.size(); i++) {
 
@@ -94,6 +84,7 @@ rule "all in one" salience 5
                 update($agent);
                 update($maze);
 end
+
 
 query isPath(Position x, Position y)
     Path(x, y;)

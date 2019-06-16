@@ -106,26 +106,54 @@ public class Agent {
         }
     }
 
-    public boolean isTarget() {
+    /**
+     * Is target already choosed?
+     *
+     * @return boolean
+     */
+    public boolean isTargetChoosed() {
         return this.target != null;
     }
 
+    /**
+     * Remove target.
+     */
     public void removeTarget() {
         this.target = null;
     }
 
+    /**
+     * Set target.
+     *
+     * @param position position
+     */
     public void setTarget(Position position) {
         this.target = position;
     }
 
+    /**
+     * Get choosed target.
+     *
+     * @return target
+     */
     public Position getTarget() {
         return this.target;
     }
 
+    /**
+     * Is game finished boolean.
+     *
+     * @return boolean
+     */
     public boolean isFinished() {
         return finished;
     }
 
+    /**
+     * Set game as finished.
+     *
+     * @param finished finished
+     */
     public void setFinished(boolean finished) {
         this.finished = finished;
     }
