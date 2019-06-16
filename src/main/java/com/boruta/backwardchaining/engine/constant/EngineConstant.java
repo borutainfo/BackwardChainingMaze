@@ -34,4 +34,8 @@ public final class EngineConstant {
      * Input argument id for energy level.
      */
     public static final int ARGUMENT_ENERGY_LEVEL = 2;
+    /**
+     * Show maze from agents perspective (dimmed unknown fields).
+     */
+    public static final boolean AGENT_PERSPECTIVE_VIEW = false;
 }

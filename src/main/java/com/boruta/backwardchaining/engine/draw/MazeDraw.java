@@ -1,6 +1,7 @@
 package com.boruta.backwardchaining.engine.draw;
 
 import com.boruta.backwardchaining.agent.structure.Agent;
+import com.boruta.backwardchaining.engine.constant.EngineConstant;
 import com.boruta.backwardchaining.maze.constant.MazeDrawConstant;
 import com.boruta.backwardchaining.maze.structure.Maze;
 import com.boruta.backwardchaining.navigation.structure.Position;
@@ -16,9 +17,9 @@ public final class MazeDraw {
     /**
      * Draw a maze.
      *
-     * @param graphics        graphics
-     * @param maze            maze
-     * @param agent current position
+     * @param graphics graphics
+     * @param maze     maze
+     * @param agent    current position
      */
     public static void draw(Graphics graphics, Maze maze, Agent agent) {
         int size = maze.getSize();
@@ -111,15 +112,17 @@ public final class MazeDraw {
 
 
         // optional: agent view
-        graphics.setColor(Color.ORANGE);
-        for (int x = 0; x < size; x++) {
-            for (int y = 0; y < size; y++) {
-                Position position = new Position(x, y);
-                if (!agent.getKnownPositions().contains(position)) {
-                    graphics.fillRect(position.getX() * MazeDrawConstant.FIELD_SIZE + MazeDrawConstant.MARGIN,
-                            (size - position.getY() - 1) * MazeDrawConstant.FIELD_SIZE + MazeDrawConstant.MARGIN,
-                            MazeDrawConstant.FIELD_SIZE,
-                            MazeDrawConstant.FIELD_SIZE);
+        if (EngineConstant.AGENT_PERSPECTIVE_VIEW) {
+            graphics.setColor(Color.ORANGE);
+            for (int x = 0; x < size; x++) {
+                for (int y = 0; y < size; y++) {
+                    Position position = new Position(x, y);
+                    if (!agent.getKnownPositions().contains(position)) {
+                        graphics.fillRect(position.getX() * MazeDrawConstant.FIELD_SIZE + MazeDrawConstant.MARGIN,
+                                (size - position.getY() - 1) * MazeDrawConstant.FIELD_SIZE + MazeDrawConstant.MARGIN,
+                                MazeDrawConstant.FIELD_SIZE,
+                                MazeDrawConstant.FIELD_SIZE);
+                    }
                 }
             }
         }

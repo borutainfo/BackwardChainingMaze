@@ -14,7 +14,7 @@ public final class ScoreLabelHelper {
     /**
      * Get text for position label.
      *
-     * @param agent the agent
+     * @param agent agent
      * @return content of position label
      */
     public static String getPositionLabel(Agent agent) {
@@ -24,7 +24,7 @@ public final class ScoreLabelHelper {
     /**
      * Get text for enemies label.
      *
-     * @param maze the maze
+     * @param maze maze
      * @return content of enemies label
      */
     public static String getEnemiesLabel(Maze maze) {
@@ -48,10 +48,23 @@ public final class ScoreLabelHelper {
     /**
      * Get text for energy label.
      *
-     * @param agent the agent
+     * @param agent agent
      * @return content of energy label
      */
     public static String getEnergyLabel(Agent agent) {
         return "Energia: " + agent.getEnergy().currentLevel() + " ";
+    }
+
+    /**
+     * Get text for maze knowledge label.
+     *
+     * @param agent agent
+     * @param maze  maze
+     * @return maze knowledge
+     */
+    public static String getMazeKnowledge(Agent agent, Maze maze) {
+        int totalSize = maze.getSize() * maze.getSize();
+        int mazeKnowledgeLevel = (agent.getKnownPositions().size() * 100) / (maze.getSize() * maze.getSize());
+        return "Eksploracja: " + agent.getKnownPositions().size() + " / " + totalSize + " = " + mazeKnowledgeLevel + " %";
     }
 }

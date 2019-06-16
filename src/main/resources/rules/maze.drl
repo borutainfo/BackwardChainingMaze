@@ -1,23 +1,25 @@
 package com.boruta
 
-import com.boruta.backwardchaining.agent.structure.Agent
-import com.boruta.backwardchaining.maze.structure.Maze
-import com.boruta.backwardchaining.agent.structure.Energy
-import java.util.List
-import com.boruta.backwardchaining.enemy.command.KillEnemyCommand
-import java.util.Random
-import com.boruta.backwardchaining.navigation.helper.OppositeDirectionHelper
-import com.boruta.backwardchaining.navigation.structure.Position
-import com.boruta.backwardchaining.navigation.helper.KnownPositionsHelper
-import com.boruta.backwardchaining.maze.helper.NeighborsHelper
-import com.boruta.backwardchaining.maze.structure.Path
-import java.util.ArrayList
-import java.util.Collections
-import com.boruta.backwardchaining.agent.command.ChooseTargetCommand
-import com.boruta.backwardchaining.navigation.helper.PathsFromTargetHelper
+import com.boruta.backwardchaining.agent.command.ChooseTargetCommand;
+import com.boruta.backwardchaining.agent.command.MakeMoveCommand;
+import com.boruta.backwardchaining.agent.structure.Agent;
+import com.boruta.backwardchaining.agent.structure.Energy;
+import com.boruta.backwardchaining.enemy.command.KillEnemyCommand;
+import com.boruta.backwardchaining.maze.helper.NeighborsHelper;
+import com.boruta.backwardchaining.maze.structure.Maze;
+import com.boruta.backwardchaining.maze.structure.Path;
+import com.boruta.backwardchaining.navigation.helper.KnownPositionsHelper;
+import com.boruta.backwardchaining.navigation.helper.OppositeDirectionHelper;
+import com.boruta.backwardchaining.navigation.helper.PathsFromTargetHelper;
+import com.boruta.backwardchaining.navigation.structure.Position;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
 
 // choose next agent target
-rule "select enemy target" salience 4
+rule "select enemy target" salience 3
     when
         $maze : Maze();
         $agent : Agent(!isFinished(), !isTargetChoosed());
@@ -29,8 +31,8 @@ rule "select enemy target" salience 4
         update($agent);
 end
 
-// build pathes from target to current position
-rule "build pathes" salience 3
+// build paths from target to current position
+rule "build paths" salience 2
     when
         $maze : Maze();
         $agent : Agent(!isFinished(), isTargetChoosed());
@@ -42,58 +44,36 @@ rule "build pathes" salience 3
         }
 end
 
-rule "move" salience 2
+// make move (and execute all associated actions)
+rule "make move" salience 1
     when
-        $agent : Agent(!isFinished(), isTargetChoosed(), $target : getTarget(), $position : getCurrentPosition(), $energy : getEnergy(), $energy.currentLevel() > 0)
-        $maze : Maze()
-        getPath($target, $position, nextMove;)
-        $pathes : ArrayList(size > 0) from collect (Path())
+        $maze : Maze();
+        $agent : Agent(!isFinished(), isTargetChoosed(), $target : getTarget(), $position : getCurrentPosition());
+        getPathStart($target, $position, pathStart;)
+        $paths : ArrayList(size > 0) from collect (Path())
     then
-        int direction;
-
-        direction = $position.getDirection(nextMove.getPathTo());
-
-                    for (int i = 0; i < $pathes.size(); i++) {
-
-                       Path f = (Path)$pathes.get(i);
-
-                       retract(f);
-
-                    }
-
-        if($agent.getWayback().size() >= $agent.getEnergy().currentLevel()) {
-            direction = $agent.getWayback().get($agent.getWayback().size() - 1);
+        // remove all known paths (will be recreated in "build paths" step)
+        for (int i = 0; i < $paths.size(); i++) {
+           retract((Path)$paths.get(i));
         }
 
-        $agent.go(direction);
-        for (Position position : KnownPositionsHelper.getVisiblePositions($agent.getCurrentPosition(), $maze)) {
-            if(!$agent.getKnownPositions().contains(position)) {
-                $agent.getKnownPositions().add(position);
-            }
-        }
+        // make move
+        MakeMoveCommand makeMoveCommand = new MakeMoveCommand($maze, $agent, $position.getDirection(pathStart.getPathTo()));
+        makeMoveCommand.execute();
 
-        KillEnemyCommand killEnemyCommand = new KillEnemyCommand($maze, $agent);
-        killEnemyCommand.execute($agent.getCurrentPosition());
-
-
-          if($agent.getCurrentPosition().equals($target)) {
-              $agent.removeTarget();
-              update($agent);
-          }
-
-                update($agent);
-                update($maze);
+        update($agent);
+        update($maze);
 end
 
 
-query isPath(Position x, Position y)
-    Path(x, y;)
+query isPath(Position pathTo, Position pathFrom)
+    Path(pathTo, pathFrom;)
     or
-    (Path(z, y;) and isPath(x, z;))
+    (Path(between, pathFrom;) and isPath(pathTo, between;))
 end
 
-query getPath(Position x, Position y, Path k)
-    k := Path(x, y;)
+query getPathStart(Position pathTo, Position pathFrom, Path pathStart)
+    pathStart := Path(pathTo, pathFrom;)
     or
-    (k := Path(z, y;) and isPath(x, z;))
+    (pathStart := Path(between, pathFrom;) and isPath(pathTo, between;))
 end

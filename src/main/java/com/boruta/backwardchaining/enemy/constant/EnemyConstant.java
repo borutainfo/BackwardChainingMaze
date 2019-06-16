@@ -11,7 +11,7 @@ public final class EnemyConstant {
     /**
      * Default number of enemies.
      */
-    public static final int DEFAULT_NUMBER_OF_ENEMIES = 16;
+    public static final int DEFAULT_NUMBER_OF_ENEMIES = 50;
     /**
      * Agent base position, forbidden for enemies.
      */

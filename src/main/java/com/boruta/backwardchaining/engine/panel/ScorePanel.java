@@ -19,6 +19,7 @@ public class ScorePanel extends JPanel {
     private JLabel positionLabel;
     private JLabel enemiesLabel;
     private JLabel energyLabel;
+    private JLabel mazeKnowledgeLabel;
 
     /**
      * Instantiates a new score panel.
@@ -31,16 +32,20 @@ public class ScorePanel extends JPanel {
         this.agent = agent;
 
         this.positionLabel = new JLabel("", SwingConstants.LEFT);
-        this.positionLabel.setFont(new Font("Arial", Font.PLAIN, 16));
+        this.positionLabel.setFont(new Font("Arial", Font.PLAIN, 12));
         add(this.positionLabel);
 
         this.enemiesLabel = new JLabel("", SwingConstants.LEFT);
-        this.enemiesLabel.setFont(new Font("Arial", Font.PLAIN, 16));
+        this.enemiesLabel.setFont(new Font("Arial", Font.PLAIN, 12));
         add(this.enemiesLabel);
 
         this.energyLabel = new JLabel("", SwingConstants.LEFT);
-        this.energyLabel.setFont(new Font("Arial", Font.PLAIN, 16));
+        this.energyLabel.setFont(new Font("Arial", Font.PLAIN, 12));
         add(this.energyLabel);
+
+        this.mazeKnowledgeLabel = new JLabel("", SwingConstants.LEFT);
+        this.mazeKnowledgeLabel.setFont(new Font("Arial", Font.PLAIN, 12));
+        add(this.mazeKnowledgeLabel);
     }
 
     public void paintComponent(Graphics page) {
@@ -48,5 +53,6 @@ public class ScorePanel extends JPanel {
         this.positionLabel.setText(ScoreLabelHelper.getPositionLabel(this.agent));
         this.enemiesLabel.setText(ScoreLabelHelper.getEnemiesLabel(this.maze));
         this.energyLabel.setText(ScoreLabelHelper.getEnergyLabel(this.agent));
+        this.mazeKnowledgeLabel.setText(ScoreLabelHelper.getMazeKnowledge(this.agent, this.maze));
     }
 }

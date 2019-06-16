@@ -82,7 +82,7 @@ public class Position implements Cloneable {
      *
      * @return current position
      */
-    public Position goNorth() {
+    private Position goNorth() {
         this.currentPosition.y++;
         return this;
     }
@@ -92,7 +92,7 @@ public class Position implements Cloneable {
      *
      * @return current position
      */
-    public Position goSouth() {
+    private Position goSouth() {
         this.currentPosition.y--;
         return this;
     }
@@ -102,7 +102,7 @@ public class Position implements Cloneable {
      *
      * @return current position
      */
-    public Position goEast() {
+    private Position goEast() {
         this.currentPosition.x++;
         return this;
     }
@@ -112,7 +112,7 @@ public class Position implements Cloneable {
      *
      * @return current position
      */
-    public Position goWest() {
+    private Position goWest() {
         this.currentPosition.x--;
         return this;
     }
@@ -136,6 +136,12 @@ public class Position implements Cloneable {
         return super.equals(object);
     }
 
+    /**
+     * Get direction from this position to given position.
+     *
+     * @param otherPosition other position
+     * @return direction
+     */
     public int getDirection(Position otherPosition) {
         if (otherPosition.getX() > this.currentPosition.getX()) {
             return NavigationConstant.DIRECTION_EAST;
