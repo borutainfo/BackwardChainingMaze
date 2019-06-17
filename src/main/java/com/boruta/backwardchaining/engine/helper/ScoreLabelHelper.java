@@ -18,7 +18,7 @@ public final class ScoreLabelHelper {
      * @return content of position label
      */
     public static String getPositionLabel(Agent agent) {
-        return "Pozycja: [x=" + agent.getCurrentPosition().getX() + ",y=" + agent.getCurrentPosition().getY() + "] ";
+        return "Position: [x=" + agent.getCurrentPosition().getX() + ",y=" + agent.getCurrentPosition().getY() + "] ";
     }
 
     /**
@@ -42,7 +42,7 @@ public final class ScoreLabelHelper {
             }
         }
 
-        return "Wrogowie: " + activeEnemies + " / " + (activeEnemies + defeatedEnemies) + " ";
+        return "Enemies: " + activeEnemies + " / " + (activeEnemies + defeatedEnemies) + " ";
     }
 
     /**
@@ -52,7 +52,7 @@ public final class ScoreLabelHelper {
      * @return content of energy label
      */
     public static String getEnergyLabel(Agent agent) {
-        return "Energia: " + agent.getEnergy().currentLevel() + " ";
+        return "Energy: " + agent.getEnergy().currentLevel() + " ";
     }
 
     /**
@@ -65,6 +65,6 @@ public final class ScoreLabelHelper {
     public static String getMazeKnowledge(Agent agent, Maze maze) {
         int totalSize = maze.getSize() * maze.getSize();
         int mazeKnowledgeLevel = (agent.getKnownPositions().size() * 100) / (maze.getSize() * maze.getSize());
-        return "Eksploracja: " + agent.getKnownPositions().size() + " / " + totalSize + " = " + mazeKnowledgeLevel + " %";
+        return "Exploration: " + agent.getKnownPositions().size() + " / " + totalSize + " = " + mazeKnowledgeLevel + " %";
     }
 }

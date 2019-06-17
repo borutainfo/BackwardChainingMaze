@@ -18,6 +18,7 @@ public class Agent {
     private List<Position> knownPositions;
     private List<Integer> wayback;
     private boolean finished = false;
+    private int numberOfActions;
 
     /**
      * Instantiates a new agent using given energy level.
@@ -30,6 +31,7 @@ public class Agent {
         this.knownPositions = new ArrayList<>();
         this.wayback = new ArrayList<>();
         this.addKnownPosition(this.currentPosition);
+        this.numberOfActions = 0;
     }
 
     /**
@@ -38,6 +40,7 @@ public class Agent {
      * @param direction direction
      */
     public void go(int direction) {
+        this.incrementAction();
         this.currentPosition.go(direction);
         this.getEnergy().move();
         this.addKnownPosition(this.currentPosition);
@@ -156,5 +159,21 @@ public class Agent {
      */
     public void setFinished(boolean finished) {
         this.finished = finished;
+    }
+
+    /**
+     * Get number of agent actions.
+     *
+     * @return number of actions
+     */
+    public int getNumberOfActions() {
+        return numberOfActions;
+    }
+
+    /**
+     * Increment number of agent actions.
+     */
+    public void incrementAction() {
+        this.numberOfActions++;
     }
 }

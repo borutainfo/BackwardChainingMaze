@@ -4,6 +4,7 @@ import com.boruta.backwardchaining.agent.constant.AgentConstant;
 import com.boruta.backwardchaining.agent.structure.Agent;
 import com.boruta.backwardchaining.agent.structure.Energy;
 import com.boruta.backwardchaining.enemy.constant.EnemyConstant;
+import com.boruta.backwardchaining.engine.command.SaveResultToFileCommand;
 import com.boruta.backwardchaining.engine.constant.EngineConstant;
 import com.boruta.backwardchaining.engine.panel.MazePanel;
 import com.boruta.backwardchaining.engine.panel.ScorePanel;
@@ -15,6 +16,7 @@ import com.boruta.backwardchaining.navigation.structure.Position;
 import org.drools.core.event.DefaultAgendaEventListener;
 import org.kie.api.KieServices;
 import org.kie.api.event.rule.AfterMatchFiredEvent;
+import org.kie.api.event.rule.BeforeMatchFiredEvent;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 
@@ -87,12 +89,32 @@ public class ApplicationService {
         kSession.insert(agent);
 
         kSession.addEventListener(new DefaultAgendaEventListener() {
+            public void beforeMatchFired(BeforeMatchFiredEvent event) {
+                if (agent.isFinished() || agent.getEnergy().currentLevel() <= 0) {
+                    SaveResultToFileCommand saveResultToFileCommand = new SaveResultToFileCommand(maze, agent);
+                    saveResultToFileCommand.execute();
+
+                    if (EngineConstant.QUIET_MODE) {
+                        appFrame.repaint();
+                        kSession.halt();
+                    } else {
+                        System.exit(0);
+                    }
+                }
+
+                super.beforeMatchFired(event);
+            }
+
             public void afterMatchFired(AfterMatchFiredEvent event) {
                 super.afterMatchFired(event);
 
+                if (EngineConstant.QUIET_MODE) {
+                    return;
+                }
+
                 try {
                     appFrame.repaint();
-                    Thread.sleep(10);
+                    Thread.sleep(50);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

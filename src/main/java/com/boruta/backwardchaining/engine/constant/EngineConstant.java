@@ -38,4 +38,8 @@ public final class EngineConstant {
      * Show maze from agents perspective (dimmed unknown fields).
      */
     public static final boolean AGENT_PERSPECTIVE_VIEW = false;
+    /**
+     * Run application in quiet mode.
+     */
+    public static final boolean QUIET_MODE = false;
 }

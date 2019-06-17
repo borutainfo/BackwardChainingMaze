@@ -39,6 +39,7 @@ public class KillEnemyCommand {
         }
 
         this.agent.getEnergy().killEnemy();
+        this.agent.incrementAction();
         this.maze.setField(field.setEnemy(EnemyConstant.STATUS_DEFEATED_ENEMY), enemyPosition);
         return true;
     }
