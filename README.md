@@ -1,4 +1,4 @@
-BackwardChaining
+Backward chaining maze
 ---
 
 The application present backward chaining algorithm on the example of a limited energy agent, placed in a random maze, the purpose of which is to destroy enemies.
